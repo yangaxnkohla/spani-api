@@ -1,19 +1,43 @@
 package com.nkohla.yanga.spaniapi.models;
 
+import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.Period;
 
+@Entity
+@Table
 public class Job {
+    @Id
+    @SequenceGenerator(
+            name = "job_sequence",
+            sequenceName = "job_sequence",
+            allocationSize = 1
+    )
+    @GeneratedValue(
+            strategy = GenerationType.SEQUENCE,
+            generator = "job_sequence"
+    )
     private Long id;
     private String role;
     private String description;
     private String link;
-    private LocalDate datePosted;
+    private LocalDate dateApplied;
+    @Transient
+    private String lastApplied;
 
-    public Job(String role, String description, String link, LocalDate datePosted) {
+    public Job() {
+    }
+
+    public Job(String role,
+               String description,
+               String link,
+               LocalDate datePosted,
+               String lastApplied) {
         this.role = role;
         this.description = description;
         this.link = link;
-        this.datePosted = datePosted;
+        this.dateApplied = datePosted;
+        this.lastApplied = lastApplied;
     }
 
     public String getRole() {
@@ -40,21 +64,31 @@ public class Job {
         this.link = link;
     }
 
-    public LocalDate getDatePosted() {
-        return datePosted;
+    public LocalDate getDateApplied() {
+        return dateApplied;
     }
 
-    public void setDatePosted(LocalDate datePosted) {
-        this.datePosted = datePosted;
+    public void setDateApplied(LocalDate dateApplied) {
+        this.dateApplied = dateApplied;
+    }
+
+    public String getLastApplied() {
+        return String.valueOf(Period.between(this.dateApplied, LocalDate.now()).getMonths());
+    }
+
+    public void setLastApplied(String lastApplied) {
+        this.lastApplied = lastApplied;
     }
 
     @Override
     public String toString() {
         return "Job{" +
-                "role='" + role + '\'' +
+                "id=" + id +
+                ", role='" + role + '\'' +
                 ", description='" + description + '\'' +
                 ", link='" + link + '\'' +
-                ", datePosted=" + datePosted +
+                ", dateApplied=" + dateApplied +
+                ", lastApplied='" + lastApplied + '\'' +
                 '}';
     }
 }

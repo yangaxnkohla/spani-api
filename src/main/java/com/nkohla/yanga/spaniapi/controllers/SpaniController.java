@@ -1,9 +1,9 @@
 package com.nkohla.yanga.spaniapi.controllers;
 
 import com.nkohla.yanga.spaniapi.models.Job;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.nkohla.yanga.spaniapi.services.SpaniService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -12,18 +12,23 @@ import java.util.List;
 @RequestMapping(path="/api/v1/jobs")
 public class SpaniController {
 
-    // Create Jobs
+    private final SpaniService spaniService;
 
+    @Autowired
+    public SpaniController(SpaniService spaniService) {
+        this.spaniService = spaniService;
+    }
+
+    // Create Jobs
+    @PostMapping
+    public void addNewJob(@RequestBody Job job) {
+        spaniService.addNewJob(job);
+    }
 
     // Get Jobs
     @GetMapping
     public List<Job> getJobs() {
-        return List.of(
-                new Job("role",
-                        "description",
-                        "link",
-                        LocalDate.of(2022, 5, 1))
-        );
+        return spaniService.getJobs();
     }
 
 
@@ -31,4 +36,8 @@ public class SpaniController {
 
 
     // Delete Jobs
+    @DeleteMapping(path="{id}")
+    public void deleteJob(@PathVariable("id") Long id) {
+        spaniService.deleteJob(id);
+    }
 }
